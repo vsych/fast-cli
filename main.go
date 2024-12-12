@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sync"
 	"time"
+	//"strings"
 )
 
 func main() {
@@ -31,15 +32,17 @@ func measureParallelDownloadSpeed(urls []string) float64 {
 	totalBytes := int64(0)
 	startTime := time.Now()
 
-	for _, url := range urls {
-		wg.Add(1)
-		go func(url string) {
-			defer wg.Done()
-			bytesDownloaded := downloadFile(url)
-			mu.Lock()
-			totalBytes += bytesDownloaded
-			mu.Unlock()
-		}(url)
+	for i := 0; i < 5; i++ {
+		for _, url := range urls {
+			wg.Add(1)
+			go func(url string) {
+				defer wg.Done()
+				bytesDownloaded := downloadFile(url)
+				mu.Lock()
+				totalBytes += bytesDownloaded
+				mu.Unlock()
+			}(url)
+		}
 	}
 
 	wg.Wait()
@@ -56,6 +59,9 @@ func measureParallelDownloadSpeed(urls []string) float64 {
 }
 
 func downloadFile(url string) int64 {
+	//url = strings.Replace(url, "speedtest", "speedtest/range/0-", 1)
+	//fmt.Printf("URL: %s\n", url)
+	buffer := make([]byte, 1024 * 1024)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -74,7 +80,6 @@ func downloadFile(url string) int64 {
 	defer resp.Body.Close()
 
 	totalBytes := int64(0)
-	buffer := make([]byte, 32*1024)
 	for {
 		n, err := resp.Body.Read(buffer)
 		if n > 0 {
