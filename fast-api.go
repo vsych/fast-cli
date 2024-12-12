@@ -15,8 +15,7 @@ func GetDlUrls(urlCount uint64) ([]string, error) {
 		return nil, fmt.Errorf("failed to retrieve API token for URL generation: %w", err)
 	}
 
-	url := fmt.Sprintf("https://api.fast.com/netflix/speedtest?https=true&token=%s&urlCount=%d", token, urlCount)
-
+	url := fmt.Sprintf("https://api.fast.com/netflix/speedtest/v2?https=true&token=%s&urlCount=%d", token, urlCount)
 	jsonData, err := getPage(url)
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch URL list from API endpoint: %w", err)
