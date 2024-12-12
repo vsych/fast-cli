@@ -16,7 +16,6 @@ func GetDlUrls(urlCount uint64) ([]string, error) {
 	}
 
 	url := fmt.Sprintf("https://api.fast.com/netflix/speedtest?https=true&token=%s&urlCount=%d", token, urlCount)
-	fmt.Printf("Getting URL list from: %s\n", url)
 
 	jsonData, err := getPage(url)
 	if err != nil {
@@ -27,10 +26,8 @@ func GetDlUrls(urlCount uint64) ([]string, error) {
 	reUrls := re.FindAllStringSubmatch(jsonData, -1)
 
 	var urls []string
-	fmt.Println("URLs:")
 	for _, arr := range reUrls {
 		urls = append(urls, arr[1])
-		fmt.Printf(" - %s\n", arr[1])
 	}
 
 	return urls, nil
@@ -50,7 +47,6 @@ func getFastToken() (string, error) {
 	}
 
 	scriptURL := fmt.Sprintf("%s/%s", baseURL, scriptNames[0])
-	fmt.Printf("Fetching token from: %s\n", scriptURL)
 
 	scriptBody, err := getPage(scriptURL)
 	if err != nil {
@@ -62,7 +58,6 @@ func getFastToken() (string, error) {
 
 	if len(tokens) > 0 {
 		token := tokens[0][7 : len(tokens[0])-1]
-		fmt.Printf("Token found: %s\n", token)
 		return token, nil
 	}
 
